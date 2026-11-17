@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#050505">
+    <script>if(!/(^|\.)spck\.io$/i.test(location.hostname)){var __m=document.createElement("link");__m.rel="manifest";__m.href="manifest.webmanifest";document.head.appendChild(__m);}</script>
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="TRADE BARR">
+    <title>Trade Barr - Access</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --accent:#E11D2E; --accent-hi:#FF3B47; --accent-lo:#B3121F;
+            --bg-0:#050505; --bg-1:#0C0C0E; --bg-2:#141416;
+            --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.16);
+            --muted:#A1A1AA; --dim:#71717A; --ease:cubic-bezier(.22,.61,.36,1);
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            margin: 0; min-height: 100vh; min-height: 100dvh;
+            display: grid; place-items: center;
+            padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #fff; background: var(--bg-0); -webkit-font-smoothing: antialiased;
+            background-image:
+                radial-gradient(700px 420px at 80% -5%, rgba(225,29,46,.22), transparent 60%),
+                radial-gradient(600px 380px at 0% 105%, rgba(225,29,46,.12), transparent 60%),
+                linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+            background-size: auto, auto, 44px 44px, 44px 44px;
+        }
+        .shell { width: 100%; max-width: 440px; animation: rise .55s var(--ease) both; }
+        .login-container {
+            background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)), var(--bg-1);
+            border: 1px solid var(--line); border-radius: 20px;
+            padding: clamp(1.5rem, 5vw, 2.5rem);
+            box-shadow: 0 24px 64px rgba(0,0,0,.65), 0 0 0 1px rgba(225,29,46,.05);
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .login-container::before {
+            content: ""; position: absolute; left: 12%; right: 12%; top: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .logo-mark {
+            width: 52px; height: 52px; margin: 0 auto 1rem; display: grid; place-items: center;
+            border-radius: 14px; font-size: 1.3rem; color: #fff;
+            background: linear-gradient(135deg, var(--accent-hi), var(--accent-lo));
+            box-shadow: 0 10px 28px rgba(225,29,46,.4);
+        }
+        .logo { font-family: 'Poppins', sans-serif; font-size: clamp(1.5rem, 5vw, 1.8rem); font-weight: 700; letter-spacing: .06em; color: var(--accent); line-height: 1; }
+        .logo span { color: #fff; }
+        .subtitle {
+            color: var(--muted); font-size: .78rem; margin: .7rem 0 1.8rem;
+            text-transform: uppercase; letter-spacing: .22em; transition: opacity .2s;
+        }
+        .input-group { margin-bottom: 1.1rem; text-align: left; animation: rise .3s var(--ease) both; }
+        .input-group label { display: block; color: var(--muted); font-size: .78rem; font-weight: 500; margin-bottom: 7px; letter-spacing: .02em; }
+        .input-group input {
+            width: 100%; background: var(--bg-0); border: 1px solid var(--line-strong); color: #fff;
+            padding: .85rem 1rem; border-radius: 10px; font: inherit; font-size: max(16px, 1rem);
+            outline: none; transition: border-color .2s, box-shadow .2s;
+        }
+        .input-group input::placeholder { color: var(--dim); }
+        .input-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(225,29,46,.2); }
+        .login-btn {
+            width: 100%; margin-top: .6rem; padding: .95rem; border: 0; border-radius: 10px; cursor: pointer;
+            font: 600 .95rem 'Inter', sans-serif; letter-spacing: .04em; color: #fff;
+            background: linear-gradient(135deg, var(--accent-hi), var(--accent) 55%, var(--accent-lo));
+            box-shadow: 0 8px 22px rgba(225,29,46,.32);
+            transition: transform .15s var(--ease), box-shadow .2s, filter .2s;
+        }
+        .login-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(225,29,46,.45); filter: brightness(1.06); }
+        .login-btn:active { transform: scale(.98); }
+        .login-btn:focus-visible, .btn-request:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+        .code-row { display: flex; gap: 8px; align-items: stretch; }
+        .code-row input { flex: 1; min-width: 0; }
+        .btn-request {
+            flex: 0 0 auto; padding: 0 1rem; border-radius: 10px; cursor: pointer; white-space: nowrap;
+            background: transparent; color: #fff; border: 1px solid var(--line-strong);
+            font: 600 .85rem 'Inter', sans-serif; transition: border-color .2s, background .2s, transform .12s;
+        }
+        .btn-request:hover { border-color: var(--accent); background: rgba(225,29,46,.12); }
+        .btn-request:active { transform: scale(.97); }
+        .error-msg {
+            display: none; margin-top: 1rem; padding: .7rem .9rem; text-align: left;
+            color: #FF8A92; font-size: .85rem; line-height: 1.4;
+            background: rgba(255,77,90,.08); border: 1px solid rgba(255,77,90,.3); border-radius: 10px;
+            animation: shake .35s var(--ease);
+        }
+        #toggle-text { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 1.4rem; font-size: .82rem; }
+        #toggle-text span { cursor: pointer; color: var(--muted) !important; text-decoration: none !important; font-weight: 500; padding: 4px 0; transition: color .2s; }
+        #toggle-text span:hover { color: #fff !important; }
+        #toggle-text span:only-child { margin-inline: auto; }
+        .foot { margin-top: 1.2rem; text-align: center; color: var(--dim); font-size: .72rem; letter-spacing: .08em; }
+
+        @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+        @keyframes shake { 20%,60% { transform: translateX(-5px); } 40%,80% { transform: translateX(5px); } }
+
+        /* Landscape phones: two-column, so nothing needs scrolling */
+        @media (orientation: landscape) and (max-height: 560px) {
+            body { place-items: start center; }
+            .shell { max-width: 760px; margin-block: auto; }
+            .login-container { padding: 1.1rem 1.6rem; }
+            .logo-mark { width: 40px; height: 40px; margin-bottom: .5rem; font-size: 1rem; }
+            .subtitle { margin: .4rem 0 .9rem; }
+            .foot { display: none; }
+            #authForm { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.2rem; align-items: start; }
+            #authForm > .input-group { margin-bottom: .7rem; }
+            #authForm > .login-btn, #authForm > .error-msg, #authForm > #toggle-text { grid-column: 1 / -1; }
+            #auth-code-group, #confirm-group { grid-column: auto; }
+            #toggle-text { margin-top: .8rem; }
+        }
+        @media (max-width: 360px) { .code-row { flex-direction: column; } .btn-request { padding: .7rem 1rem; } }
+
+        /* ===== Futuristic layer ===== */
+        @property --ang { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+        body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+            background: radial-gradient(420px 320px at 50% 45%, rgba(225,29,46,.22), transparent 70%);
+            animation: breathe 6s ease-in-out infinite alternate; }
+        @keyframes breathe { from { opacity: .55; transform: scale(.94); } to { opacity: 1; transform: scale(1.08); } }
+        .logo, .subtitle, .login-btn { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+        .logo { text-shadow: 0 0 26px rgba(225,29,46,.7); }
+        .subtitle { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .7rem; color: #FF8A92; }
+        .subtitle::before { content: "> "; opacity: .7; }
+        .login-container {
+            background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.01) 50%), rgba(10,10,12,.78);
+            -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+            border: 1px solid transparent; border-radius: 22px;
+            box-shadow: 0 30px 80px -20px rgba(0,0,0,.9), 0 0 60px -20px rgba(225,29,46,.45), inset 0 1px 0 rgba(255,255,255,.1);
+        }
+        .login-container::after { /* rotating neon edge */
+            content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none;
+            background: conic-gradient(from var(--ang), transparent 0 55%, rgba(225,29,46,.95) 75%, #fff 80%, transparent 90%);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+            animation: spin 6s linear infinite;
+        }
+        @keyframes spin { to { --ang: 360deg; } }
+        .logo-mark { animation: float 4s ease-in-out infinite; box-shadow: 0 0 0 1px rgba(255,255,255,.15) inset, 0 12px 36px rgba(225,29,46,.6); }
+        @keyframes float { 50% { transform: translateY(-4px); } }
+        .input-group input { background: rgba(5,5,5,.75); }
+        .input-group input:focus { box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(225,29,46,.3); }
+        .login-btn { position: relative; overflow: hidden; }
+        .login-btn::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.4), transparent); transform: skewX(-20deg); transition: left .6s var(--ease); pointer-events: none; }
+        .login-btn:hover::after { left: 130%; }
+        .foot { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+        .foot::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); vertical-align: middle; }
+        @media (prefers-reduced-motion: reduce) { body::before, .logo-mark, .login-container::after { animation: none; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+    </style>
+</head>
+<body>
+
+    <main class="shell">
+    <div class="login-container">
+        <div class="logo-mark" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
+        <div class="logo">TRADE<span>BARR</span></div>
+        <div class="subtitle" id="form-subtitle">Terminal Hub Login</div>
+
+        <form id="authForm">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter username" autocomplete="username" autocapitalize="none" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required>
+            </div>
+
+            <!-- This field is hidden by default, only shows on Sign Up -->
+            <div class="input-group" id="confirm-group" style="display: none;">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm password" autocomplete="new-password">
+            </div>
+
+            <div class="input-group" id="auth-code-group" style="display: none;">
+                <label for="authCode">Authentication Code</label>
+                <div class="code-row">
+                    <input type="text" id="authCode" placeholder="e.g. A8X2B91M" autocomplete="off" autocapitalize="characters">
+                    <button type="button" class="btn-request" onclick="window.location.href='mailto:aldrinneust@gmail.com?subject=Trade%20Barr%20Access%20Request&body=Hi%20Admin,%20I%20would%20like%20to%20purchase%20an%20access%20code.'">
+                        <i class="fas fa-envelope"></i> Request
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn" id="auth-btn">
+                <i class="fas fa-lock" style="margin-right: 8px;"></i> Authenticate
+            </button>
+
+            <div id="error-message" class="error-msg" role="alert"></div>
+
+            <div class="toggle-node" id="toggle-text">
+                <span onclick="setAuthMode('signup')">Create Account</span>
+                <span onclick="setAuthMode('renew')">Renew Access</span>
+            </div>
+        </form>
+    </div>
+    <div class="foot">SECURE MEMBER ACCESS</div>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="supabase.js"></script>
+    <script>
+    let authMode = 'login';   // 'login' | 'signup' | 'renew'
+    const $ = id => document.getElementById(id);
+    const MSG = {
+        CODE_INVALID: 'Invalid access code. Please enter a valid purchased code.', CODE_USED: 'This access code has already been used.',
+        CODE_DISABLED: 'This access code has been disabled.', CODE_STAFF_SIGNUP_ONLY: 'This code can only be used when creating a new account.',
+        CODE_FREE_NOT_UPGRADE: 'This is a free-member code. Use a paid access code to renew.', STAFF_NO_CODE: 'Staff accounts do not need access codes.',
+        ALREADY_LIFETIME: 'Your account already has lifetime access.', USERNAME_TAKEN: 'That username is already taken.',
+        USERNAME_INVALID: 'Username must be 3-24 characters: letters, numbers, spaces, dot, underscore or hyphen.'
+    };
+    const showErr = t => { const e = $('error-message'); e.innerText = t; e.style.display = 'block'; };
+    const fail = c => showErr(MSG[c] || c || 'Something went wrong. Please try again.');
+    const swalBase = { background: '#0C0C0E', color: '#ffffff', confirmButtonColor: '#E11D2E' };
+
+    function remainingText(a) {
+        if (a.role === 'owner' || a.role === 'admin') return 'Staff Access (No Expiry)';
+        if (a.role === 'free') return 'Free Member Access';
+        if (a.membership_type === 'lifetime') return 'Lifetime Access (Unlimited)';
+        const ms = new Date(a.expires_at) - (Date.now() + (new Date(a.server_now) - Date.now()));
+        if (ms <= 0) return 'Expired';
+        const d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4);
+        return d > 0 ? `${d} Days, ${h} Hours remaining` : h > 0 ? `${h} Hours, ${m} Minutes remaining` : `${m} Minutes remaining`;
+    }
+    const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    function welcome(title, name, a, expiredNote) {
+        return Swal.fire({ ...swalBase, title, icon: expiredNote ? 'warning' : 'success', confirmButtonText: 'Enter Dashboard',
+            html: `<p style="color:#A1A1AA;margin-bottom:12px;">Welcome <b>${esc(name)}</b>!</p>
+                   <div style="background:#141416;border:1px solid #E11D2E;padding:12px;border-radius:8px;color:#FF8A92;font-weight:bold;">
+                     <i class="fas fa-hourglass-half" style="margin-right:8px;"></i>${a.role.toUpperCase()} · ${remainingText(a)}</div>
+                   ${expiredNote ? '<p style="color:#A1A1AA;margin-top:12px;font-size:.85rem;">Your paid time has ended. Free features stay available - renew from your Profile page.</p>' : ''}`
+        }).then(() => { window.location.href = 'dashboard.html'; });
+    }
+
+    function setAuthMode(mode) {
+        authMode = mode;
+        const cg = $('confirm-group'), ag = $('auth-code-group'), btn = $('auth-btn'), tt = $('toggle-text'), sub = $('form-subtitle');
+        $('error-message').style.display = 'none'; $('confirmPassword').value = ''; $('authCode').value = '';
+        const link = (m, t) => `<span onclick="setAuthMode('${m}')">${t}</span>`;
+        $('confirmPassword').required = mode === 'signup'; $('authCode').required = mode !== 'login';
+        cg.style.display = mode === 'signup' ? 'block' : 'none'; ag.style.display = mode === 'login' ? 'none' : 'block';
+        $('password').autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
+        if (mode === 'login') { sub.innerText = 'Terminal Hub Login'; btn.innerHTML = '<i class="fas fa-lock" style="margin-right: 8px;"></i> Authenticate'; tt.innerHTML = link('signup', 'Create Account') + ' ' + link('renew', 'Renew Access'); }
+        else if (mode === 'signup') { sub.innerText = 'Register New Account'; btn.innerHTML = '<i class="fas fa-user-plus" style="margin-right: 8px;"></i> Create Account'; tt.innerHTML = link('login', 'Already have an account? Log In'); }
+        else { sub.innerText = 'Renew Subscription'; btn.innerHTML = '<i class="fas fa-sync-alt" style="margin-right: 8px;"></i> Renew Access'; tt.innerHTML = link('login', 'Back to Log In'); }
+    }
+
+    async function emailFor(user) {
+        const { data } = await supabase.rpc('login_email_for_username', { p_username: user });
+        return data;
+    }
+    async function signIn(user, pass) {
+        const email = await emailFor(user);
+        if (!email) return { error: { message: 'bad' } };
+        return supabase.auth.signInWithPassword({ email, password: pass });
+    }
+
+    $('authForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (!supabase) return showErr('Supabase is not configured. Edit config.js (see README).');
+        const user = $('username').value.trim(), pass = $('password').value, btn = $('auth-btn');
+        const code = $('authCode').value.trim().toUpperCase();
+        $('error-message').style.display = 'none'; btn.disabled = true;
+        try {
+            if (authMode === 'signup') {
+                if (pass !== $('confirmPassword').value) return showErr('Passwords do not match.');
+                if (pass.length < 8 || !/[A-Za-z]/.test(pass) || !/[0-9]/.test(pass)) return showErr('Password needs at least 8 characters, with letters and numbers.');
+                const chk = await supabase.rpc('check_signup_code', { p_code: code });
+                if (chk.error) return showErr(chk.error.message);
+                if (!chk.data.ok) return fail(chk.data.reason);
+                const av = await supabase.rpc('username_available', { p_username: user });
+                if (!av.data) return fail(user.length < 3 ? 'USERNAME_INVALID' : 'USERNAME_TAKEN');
+                const alias = 'u' + [...crypto.getRandomValues(new Uint8Array(8))].map(b => b.toString(16).padStart(2, '0')).join('') + '@users.tradebarr.app';
+                const { data, error } = await supabase.auth.signUp({ email: alias, password: pass, options: { data: { username: user, access_code: code } } });
+                if (error) return showErr(/database error/i.test(error.message) ? 'Could not create the account. The code or username may have just been taken - please try again.' : error.message);
+                if (!data.session) { const s = await supabase.auth.signInWithPassword({ email: alias, password: pass }); if (s.error) return showErr('Account created, but automatic sign-in failed. Please log in.'); }
+                const acc = (await supabase.rpc('my_access')).data;
+                return welcome('Account Registered!', acc.username, acc);
+
+            } else if (authMode === 'renew') {
+                const s = await signIn(user, pass); if (s.error) return showErr('Invalid username or password.');
+                const r = await supabase.rpc('redeem_access_code', { p_code: code });
+                if (r.error) { await supabase.auth.signOut(); return fail(Object.keys(MSG).find(k => r.error.message.includes(k)) || r.error.message); }
+                return welcome('Subscription Renewed!', r.data.username, r.data);
+
+            } else {
+                const s = await signIn(user, pass); if (s.error) return showErr('Invalid username or password.');
+                const acc = (await supabase.rpc('my_access')).data;
+                if (!acc) { await supabase.auth.signOut(); return showErr('This account has no profile. Please contact support.'); }
+                return welcome('Access Granted!', acc.username, acc, acc.status === 'expired');
+            }
+        } catch (err) { showErr(err.message || 'Unexpected error.'); }
+        finally { btn.disabled = false; }
+    });
+
+    // Already signed in? go straight to the dashboard.
+    (async () => { if (supabase && !/YOUR_SUPABASE/.test(CONFIG.SUPABASE_URL)) { const { data: { session } } = await supabase.auth.getSession(); if (session) location.replace('dashboard.html'); } })();
+    </script>
+</body>
+</html>

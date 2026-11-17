@@ -1,0 +1,105 @@
+
+:root {
+    --gold: #E11D2E;
+    --gold-glow: rgba(225,29,46, 0.2);
+    --bg-dark: #050505;
+    --panel-bg: #0C0C0E;
+    --card-bg: #141416;
+    --text-main: #FFFFFF;
+    --text-muted: #A0A0A0;
+    --border-color: rgba(255, 255, 255, 0.05);
+    
+    --win-green: #00C853;
+    --loss-red: #FF4D5A;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+/* Glassmorphism & Cards */
+.glass-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px var(--gold-glow);
+    transform: translateY(-2px);
+}
+
+/* Typography & Colors */
+.text-gold { color: var(--gold); }
+.text-muted { color: var(--text-muted); }
+
+/* Buttons */
+.btn-gold {
+    background: linear-gradient(135deg, #E11D2E, #B3121F);
+    color: var(--bg-dark);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-gold:hover {
+    box-shadow: 0 0 15px var(--gold-glow);
+    transform: scale(1.02);
+}
+
+/* Forms */
+input {
+    width: 100%;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    border-color: var(--gold);
+}
+
+/* Layout Utilities */
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,131 @@
+/* ==========================================================================
+   TRADE BARR — FUTURISTIC LAYER (visual only; loads after theme.css)
+   HUD grid, aurora glow, glass panels with cursor spotlight, neon accents.
+   ========================================================================== */
+
+:root {
+    --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    --neon: 0 0 0 1px rgba(225,29,46,.45), 0 0 18px rgba(225,29,46,.35), 0 0 42px rgba(225,29,46,.18);
+    --glass: rgba(12,12,14,.66);
+}
+
+/* ---------- Typography ---------- */
+h1, h2, h3, h4, h5, .sidebar-header h2, [style*="Poppins"], .dash-guide-num { font-family: var(--font-display) !important; }
+h2 { letter-spacing: -.02em; }
+.view-header h2, #view-dashboard .view-header h2 {
+    background: linear-gradient(100deg, #fff 30%, #FF8A92 75%, var(--accent-hi));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.view-header h3 p, .column-header { font-family: var(--font-display); letter-spacing: .22em !important; font-size: .78rem !important; text-transform: uppercase; text-shadow: 0 0 16px rgba(225,29,46,.55); }
+.view-header h3 p::before { content: "// "; opacity: .6; }
+h2[id^="stat-"], #view-history h2, #pnl h2, [id^="admin-stat"], .data-value, .fear-score, td, .signal-grid {
+    font-variant-numeric: tabular-nums;
+}
+h2[id^="stat-"], #pnl h2, [id^="admin-stat"] { font-family: var(--font-mono) !important; letter-spacing: -.03em; text-shadow: 0 0 22px currentColor; }
+[style*="monospace"], .signal-grid { font-family: var(--font-mono) !important; }
+
+/* ---------- Atmosphere: HUD grid + drifting aurora ---------- */
+body::before, body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+body::before {
+    background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, #000 20%, transparent 78%);
+            mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, #000 20%, transparent 78%);
+}
+body::after {
+    background:
+        radial-gradient(520px 380px at 12% 18%, rgba(225,29,46,.16), transparent 70%),
+        radial-gradient(620px 440px at 92% 82%, rgba(225,29,46,.12), transparent 70%);
+    animation: aurora 22s ease-in-out infinite alternate;
+    will-change: transform;
+}
+@keyframes aurora { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(-3%, 2%, 0) scale(1.08); } }
+
+/* ---------- Sidebar: HUD rail ---------- */
+.sidebar { background: linear-gradient(180deg, rgba(14,14,16,.92), rgba(6,6,7,.96)); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+.sidebar::after { content: ""; position: absolute; top: 0; right: -1px; bottom: 0; width: 1px; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(225,29,46,.7) 30%, rgba(225,29,46,.05) 70%, transparent); }
+.sidebar-header h2 .text-gold { text-shadow: 0 0 22px rgba(225,29,46,.8); }
+.sidebar-header p::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2s infinite; vertical-align: middle; }
+.nav-link { border-radius: 12px; font-family: var(--font-display); letter-spacing: .01em; }
+.nav-link i {
+    display: inline-grid !important; place-items: center; width: 32px !important; height: 32px; flex: 0 0 32px;
+    border-radius: 9px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); font-size: .88rem !important;
+    transition: background var(--dur), box-shadow var(--dur), border-color var(--dur), color var(--dur);
+}
+.nav-link:hover i { background: rgba(225,29,46,.14); border-color: rgba(225,29,46,.35); }
+.nav-link.active { background: linear-gradient(90deg, rgba(225,29,46,.26), rgba(225,29,46,.03) 85%); box-shadow: inset 0 0 0 1px rgba(225,29,46,.35), 0 8px 24px -12px rgba(225,29,46,.6); }
+.nav-link.active i { background: linear-gradient(135deg, var(--accent-hi), var(--accent-lo)); border-color: transparent; color: #fff !important; box-shadow: 0 0 16px rgba(225,29,46,.7); }
+.nav-link.active::before { box-shadow: 0 0 14px var(--accent), 0 0 30px rgba(225,29,46,.5); }
+
+/* ---------- Glass panels with cursor spotlight ---------- */
+.glass-panel, .card, .dash-community-card, .signal-card,
+.main-content [style*="background: #0C0C0E"],
+.main-content [style*="background: rgba(255, 255, 255, 0.02)"] {
+    background:
+        radial-gradient(360px circle at var(--mx, 50%) var(--my, -40%), rgba(225,29,46,.16), transparent 62%),
+        linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.012) 45%),
+        var(--glass) !important;
+    border-radius: 14px !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 18px 44px -22px rgba(0,0,0,.9);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
+    transition: box-shadow .3s var(--ease), transform .3s var(--ease);
+}
+.glass-panel:hover, .card:hover, .dash-community-card:hover,
+.main-content [style*="background: #0C0C0E"]:hover,
+.main-content [style*="background: rgba(255, 255, 255, 0.02)"]:hover {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 0 0 1px rgba(225,29,46,.35), 0 22px 50px -20px rgba(225,29,46,.35);
+}
+.dash-community-card:hover { transform: translateY(-4px); }
+.dash-icon-box { border-radius: 14px !important; box-shadow: 0 0 22px rgba(225,29,46,.25), inset 0 0 12px rgba(225,29,46,.15); }
+.dash-guide-num { font-family: var(--font-mono) !important; box-shadow: 0 0 14px rgba(225,29,46,.2); }
+
+/* HUD corner brackets on the chart frames */
+.tv-container { position: relative; }
+.tv-container::before, .tv-container::after { content: ""; position: absolute; width: 22px; height: 22px; z-index: 3; pointer-events: none; border: 2px solid var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+.tv-container::before { top: 8px; left: 8px; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+.tv-container::after  { bottom: 8px; right: 8px; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+
+/* ---------- Buttons: neon + sweep ---------- */
+.btn-gold, .login-btn, button[style*="var(--gold)"], button[style*="#E11D2E"] { position: relative; overflow: hidden; font-family: var(--font-display); }
+.btn-gold::after, button[style*="background: var(--gold)"]::after {
+    content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; pointer-events: none;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg); transition: left .6s var(--ease);
+}
+.btn-gold:hover::after, button[style*="background: var(--gold)"]:hover::after { left: 130%; }
+.btn-gold:hover, button[style*="background: var(--gold)"]:hover { box-shadow: var(--neon); }
+button[style*="1px solid var(--gold)"]:hover { box-shadow: var(--neon); background: rgba(225,29,46,.2) !important; }
+.btn-asset { font-family: var(--font-display); letter-spacing: .04em; border-radius: 10px; }
+.btn-asset.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(225,29,46,.35); }
+
+/* ---------- Inputs ---------- */
+input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 1px var(--accent), 0 0 22px rgba(225,29,46,.3); }
+input, select, textarea { background-color: rgba(5,5,5,.7); border-radius: 10px; }
+
+/* ---------- Status, badges, tables ---------- */
+.status-indicator { font-family: var(--font-mono); border-color: rgba(225,29,46,.4); background: rgba(225,29,46,.08); box-shadow: 0 0 18px rgba(225,29,46,.18); }
+.status-indicator::after { content: "LIVE"; color: var(--accent-hi); }
+.badge-result, .badge-impact { font-family: var(--font-mono); font-size: .68rem; }
+.data-table th, .calendar-table th { font-family: var(--font-mono); color: var(--accent-hi); }
+.data-table tbody tr:hover, .calendar-table tbody tr:hover { background: linear-gradient(90deg, rgba(225,29,46,.12), transparent); }
+.mobile-header { background: rgba(6,6,7,.78); border-bottom-color: rgba(225,29,46,.25); }
+
+/* ---------- Motion: blur-in views, staggered grids ---------- */
+@keyframes viewIn { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.signal-card, .dash-community-grid > *, .dash-guidelines-grid > *, .stats-grid > * { animation-name: viewIn; }
+.dash-guidelines-grid > *:nth-child(2) { animation-delay: .06s; } .dash-guidelines-grid > *:nth-child(3) { animation-delay: .12s; } .dash-guidelines-grid > *:nth-child(4) { animation-delay: .18s; }
+
+/* Progress bars glow */
+[style*="border-radius: 10px"][style*="overflow: hidden"] > div { box-shadow: 0 0 14px rgba(225,29,46,.6); }
+
+/* ---------- Lighter on small / low-power screens ---------- */
+@media (max-width: 992px), (hover: none) {
+    body::after { animation: none; }
+    .glass-panel, .card, .dash-community-card, .signal-card,
+    .main-content [style*="background: #0C0C0E"], .main-content [style*="background: rgba(255, 255, 255, 0.02)"] { -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (max-width: 520px) { .tv-container::before, .tv-container::after { width: 14px; height: 14px; } }
+@media (prefers-reduced-motion: reduce) { body::after { animation: none; } .btn-gold::after { display: none; } }
